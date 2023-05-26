@@ -8,7 +8,6 @@ import { mimeType } from "./mime-type.validator";
 
 //In this app we use ReactiveFormsModule for creating new post, and FormsModule(Template driven approach) for the login and signup
 
-
 @Component({
   selector: 'app-create-post',
   templateUrl: './create-post.component.html',

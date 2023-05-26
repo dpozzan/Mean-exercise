@@ -3,7 +3,9 @@ import { Injectable } from "@angular/core";
 import { AuthData } from "./auth-data.model";
 import { Subject } from "rxjs";
 import { Router } from "@angular/router";
+import { environment } from "src/environments/environment";
 
+const BACKEND_URL = environment.apiUrl + 'auth/'
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -20,19 +22,19 @@ export class AuthService {
 
     handleSignup(authData: AuthData) {
         this.isLoading = true
-        this.http.post<{ message: string, user: AuthData }>('http://localhost:3000/api/auth/signup', authData)
+        this.http.post<{ message: string, user: AuthData }>(BACKEND_URL + 'signup', authData)
             .subscribe( response => {
                 this.isLoading = false;
-                this.router.navigate(['/login']);
+                this.router.navigate(['/auth/login']);
             }, error => {
                 this.isLoading = false;
-                this.router.navigate(['/signup'])
+                this.router.navigate(['/auth/signup'])
             })
     }
 
     handleLogin(authData: AuthData) {
         this.isLoading = true;
-        this.http.post<{ message: string, token: string, expiresIn: number, userId: string }>('http://localhost:3000/api/auth/login', authData)
+        this.http.post<{ message: string, token: string, expiresIn: number, userId: string }>(BACKEND_URL + 'login', authData)
             .subscribe( response => {
                this.token = response.token;
                 this.isAuth = true;
@@ -45,7 +47,7 @@ export class AuthService {
             }, error => {
                 this.isLoading = false;
                 this.isAuthenticated.next(false); 
-                this.router.navigate(['/login']);
+                this.router.navigate(['/auth/login']);
             })
     }
 
@@ -58,7 +60,7 @@ export class AuthService {
         this.clearAuthData();
         clearTimeout(this.logoutTimer);
         this.isLoading = false;
-        this.router.navigate(['/login']);
+        this.router.navigate(['/auth/login']);
     }
 
     saveAuthData(token: string, expiresIn: number, userId: string) {

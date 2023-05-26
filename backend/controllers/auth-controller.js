@@ -37,7 +37,7 @@ exports.handleLogin = (req, res, next) => {
             }
 
             const token = jwt.sign( { email: fetchedUser.email, userId: fetchedUser._id }, 
-                'secret-word-should-be-longer-longer-longer-to-be-more-secure-secure-secure', 
+                process.env.JWT_SECURE_KEY, 
                 { expiresIn: '1h' } 
             );
 

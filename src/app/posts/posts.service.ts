@@ -3,7 +3,10 @@ import { Post } from './post.model';
 import { Subject, connect, map } from "rxjs";
 import { HttpClient } from '@angular/common/http';
 import { Router } from "@angular/router";
+import { environment } from "src/environments/environment";
 
+
+const BACKEND_URL = environment.apiUrl;
 
 @Injectable({providedIn: 'root'})
 export class PostsService {
@@ -19,7 +22,7 @@ export class PostsService {
   getPosts(pageSize: number, currentPage: number) {
     this.isLoading = true;
     const queryParams = `?pageSize=${pageSize}&page=${currentPage}`;
-    this.http.get<{ message: string, postsData: { posts: { _id: string, title: string, content: string, imagePath: string, creator: string }[], postsCount: number } }>('http://localhost:3000/api/posts' + queryParams)
+    this.http.get<{ message: string, postsData: { posts: { _id: string, title: string, content: string, imagePath: string, creator: string }[], postsCount: number } }>(BACKEND_URL + 'posts' + queryParams)
       .pipe(map( responseData => {
         return {
           posts: responseData.postsData.posts.map(post => {
@@ -42,7 +45,7 @@ export class PostsService {
 
   getPost(postId: string) {
     this.isLoading = true;
-    this.http.get<{ message: string, post: {_id: string, title: string, content: string, imagePath: string, creator: string} }>('http://localhost:3000/api/post/' + postId)
+    this.http.get<{ message: string, post: {_id: string, title: string, content: string, imagePath: string, creator: string} }>(BACKEND_URL + 'post/' + postId)
       .pipe(map(response => {
         return {id: response.post._id, title: response.post.title, content: response.post.content, imagePath: response.post.imagePath, creator: response.post.creator}
       }))   
@@ -72,7 +75,7 @@ export class PostsService {
     this.post.append('content', content);
     this.post.append('image', image, title)
     // this.post.append('image', post.image, post.title)
-    this.http.post<{ message: string, post: { _id: string, title: string, content: string, image: string | File } }>('http://localhost:3000/api/posts', this.post)
+    this.http.post<{ message: string, post: { _id: string, title: string, content: string, image: string | File } }>(BACKEND_URL + 'posts', this.post)
       .subscribe( responseData => {
         // I don't really need to refresh here the values, because I already navigate to another page refreshing the site
         // this.posts.push({ id: responseData.post._id, title: responseData.post.title, content: responseData.post.content, imagePath: '' })
@@ -86,7 +89,7 @@ export class PostsService {
 
   deletePost(postId: string) {
     this.isLoading = true;
-    return this.http.delete<{ message: string, postId: string }>('http://localhost:3000/api/post/' + postId)
+    return this.http.delete<{ message: string, postId: string }>(BACKEND_URL + 'post/' + postId)
     // Here I don't navigate away, so for not getting an error on next, because I don't have in this file postsCount to update the value of updatedPosts
     // I will return the observable without subscription, and I will manage that outside the service
     // this.http.delete<{ message: string, postId: string }>('http://localhost:3000/api/post/' + postId)
@@ -114,7 +117,7 @@ export class PostsService {
         imagePath: image,
       }
     }
-    this.http.put<{ message: String, post: { _id: string, title: string, content: string, imagePath: string }}>('http://localhost:3000/api/edit/' + postId, updatedPost)
+    this.http.put<{ message: String, post: { _id: string, title: string, content: string, imagePath: string }}>(BACKEND_URL + 'edit/' + postId, updatedPost)
       .subscribe( resp => {
         // I don't really need to refresh here the values, because I already navigate to another page refreshing the site
         // const updatedPostIndex = this.posts.findIndex( post => post.id === resp.post._id);

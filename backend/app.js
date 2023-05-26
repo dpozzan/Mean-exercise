@@ -7,14 +7,14 @@ const app = express();
 const authRoutes = require('./routes/auth');
 const postsRoutes = require('./routes/posts');
 
-mongoose.connect('mongodb+srv://dan_evan:BfcBjU7fCjY3nIn0@cluster0.pkc2ray.mongodb.net/myMessages?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://' + process.env.MONGODB_ATLAS_USER + ':' + process.env.MONGODB_ATLAS_PWD + '@cluster0.pkc2ray.mongodb.net/myMessages?retryWrites=true&w=majority')
   .then( resp => {
     console.log('MongoDb Connected! ')
   })
   .catch(err => {
     console.log('MongoDb Connection Failed! ', err)
   })
-// BfcBjU7fCjY3nIn0
+
 
 
 app.use('/images', express.static(path.join(__dirname, 'images'))) // This allow to access the images folder without 
